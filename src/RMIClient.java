@@ -7,7 +7,7 @@ import java.util.Scanner;
 public class RMIClient {
 
     private static IMazeHub iMazeHub = null;
-    private static int selectMazeIndex = -1;
+    private static IMaze selectedMaze = null;
 
     public static void main(String[] args) {
 
@@ -49,13 +49,16 @@ public class RMIClient {
                     createObject(parsedInput.getArgs());
                     break;
                 case DELETE_OBJECT:
+                    deleteObject(parsedInput.getArgs());
                     break;
                 case LIST_AGENTS:
                     listAgents();
                     break;
                 case MOVE_AGENT:
+                    moveAgent(parsedInput.getArgs());
                     break;
                 case QUIT:
+                    quit();
                     break;
             }
         }
@@ -72,20 +75,40 @@ public class RMIClient {
     }
 
     private static void deleteMaze(Object[] args){
+        try {
+            printOpResult(iMazeHub.removeMaze((int) args[0]));
+            selectedMaze = null;
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
 
+    private static void moveAgent(Object[] args){
+        // TODO:: implement
+    }
+
+    private static void deleteObject(Object[] args){
+        // TODO:: implement
+    }
+
+    private static void quit(){
+        // TODO:: implement
     }
 
     private static void selectMaze(Object[] args){
-        selectMazeIndex = (int) args[0];
+        try {
+            selectedMaze = iMazeHub.getMaze((int) args[0]);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void printMaze(){
         try {
-            IMaze iMaze = iMazeHub.getMaze(selectMazeIndex);
-            if(iMaze != null)
-                System.out.println(iMaze.print());
+            if(selectedMaze != null)
+                System.out.println(selectedMaze.print());
             else
-                System.out.println("Selected Maze index out of bounds");
+                System.out.println("Selected Maze null");
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -93,14 +116,13 @@ public class RMIClient {
 
     private static void listAgents(){
         try {
-            IMaze iMaze = iMazeHub.getMaze(selectMazeIndex);
-            if(iMaze != null){
-                Agent[] agents = iMaze.getAgents();
+            if(selectedMaze != null){
+                Agent[] agents = selectedMaze.getAgents();
                 for (int i = 0; i < agents.length; i++){
                     System.out.println(agents[i].print());
                 }
             } else {
-                System.out.println("Selected Maze index out of bounds");
+                System.out.println("Selected Maze null");
             }
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -109,9 +131,8 @@ public class RMIClient {
 
     private static void createObject(Object[] args){
         try {
-            IMaze iMaze = iMazeHub.getMaze(selectMazeIndex);
-            if (iMaze != null){
-                 printOpResult(iMaze.createObject(new Position((int) args[0], (int) args[1]), (MazeObjectType) args[2]));
+            if (selectedMaze != null){
+                 printOpResult(selectedMaze.createObject(new Position((int) args[0], (int) args[1]), (MazeObjectType) args[2]));
             } else {
                 System.out.println("Selected Maze index out of bounds");
             }

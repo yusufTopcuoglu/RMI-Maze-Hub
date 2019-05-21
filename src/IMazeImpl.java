@@ -84,7 +84,7 @@ public class IMazeImpl extends UnicastRemoteObject implements IMaze, Serializabl
         for (int i = 0; i < width; i++){
             sb.append("-");
         }
-        sb.append("+\n");
+        sb.append("+");
         return sb.toString();
     }
 
