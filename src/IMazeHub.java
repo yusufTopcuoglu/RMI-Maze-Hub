@@ -10,8 +10,4 @@ public interface IMazeHub extends Remote {
 
     boolean removeMaze(int index) throws RemoteException;
 
-    String printSelectedMaze() throws RemoteException;
-
-    void selectMaze(int index) throws RemoteException;
-
 }

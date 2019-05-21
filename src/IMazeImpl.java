@@ -14,12 +14,10 @@ public class IMazeImpl extends UnicastRemoteObject implements IMaze, Serializabl
         this.height = height;
         this.width = width;
         mazeObjectList = new MazeObject[width][height];
-        System.out.println("create");
     }
 
     @Override
     public MazeObject getObject(Position position) throws RemoteException {
-        System.out.println("getObject");
         if (isInside(position))
             return mazeObjectList[position.getX()][position.getY()];
         return null;
@@ -87,9 +85,7 @@ public class IMazeImpl extends UnicastRemoteObject implements IMaze, Serializabl
             sb.append("-");
         }
         sb.append("+\n");
-        String result = sb.toString();
-        System.out.println(result);
-        return result;
+        return sb.toString();
     }
 
     private void add(Position position, MazeObjectType type){

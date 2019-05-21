@@ -7,6 +7,7 @@ import java.util.Scanner;
 public class RMIClient {
 
     private static IMazeHub iMazeHub = null;
+    private static int selectMazeIndex = -1;
 
     public static void main(String[] args) {
 
@@ -45,10 +46,12 @@ public class RMIClient {
                     printMaze();
                     break;
                 case CREATE_OBJECT:
+                    createObject(parsedInput.getArgs());
                     break;
                 case DELETE_OBJECT:
                     break;
                 case LIST_AGENTS:
+                    listAgents();
                     break;
                 case MOVE_AGENT:
                     break;
@@ -61,7 +64,6 @@ public class RMIClient {
     private static void createMaze(Object[] args){
         try {
             if (iMazeHub != null) {
-                System.out.println("crate Maze");
                 iMazeHub.createMaze((int) args[0],(int) args[1]);
             }
         } catch (RemoteException e) {
@@ -74,21 +76,34 @@ public class RMIClient {
     }
 
     private static void selectMaze(Object[] args){
+        selectMazeIndex = (int) args[0];
+    }
+
+    private static void printMaze(){
         try {
-            iMazeHub.selectMaze((int) args[0]);
+            IMaze iMaze = iMazeHub.getMaze(selectMazeIndex);
+            if(iMaze != null)
+                System.out.println(iMaze.print());
         } catch (RemoteException e) {
             e.printStackTrace();
         }
     }
 
-    private static void printMaze(){
+    private static void listAgents(){
         try {
-            if (iMazeHub != null) {
-                iMazeHub.printSelectedMaze();
+            IMaze iMaze = iMazeHub.getMaze(selectMazeIndex);
+            if(iMaze != null){
+                Agent[] agents = iMaze.getAgents();
+                for (int i = 0; i < MazeObjectFactory.agentId; i++){
+                    System.out.println(agents[i]);
+                }
             }
         } catch (RemoteException e) {
             e.printStackTrace();
         }
     }
 
+    private static void createObject(Object[] args){
+
+    }
 }

@@ -9,4 +9,9 @@ public class Agent extends MazeObject{
         this.id = id;
         this.collectedGold = 0;
     }
+
+    @Override
+    public String toString() {
+        return "Agent" + id + " at " + getPosition() + ". Gold collected: " + collectedGold + ".\n";
+    }
 }

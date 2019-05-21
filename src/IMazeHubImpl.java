@@ -7,7 +7,6 @@ import java.util.List;
 public class IMazeHubImpl extends UnicastRemoteObject implements IMazeHub, Serializable {
 
     private List<IMaze> iMazeList = new ArrayList<>();
-    private IMaze selectedMaze = null;
 
     protected IMazeHubImpl() throws RemoteException {}
 
@@ -32,28 +31,5 @@ public class IMazeHubImpl extends UnicastRemoteObject implements IMazeHub, Seria
             return false;
         iMazeList.remove(index);
         return true;
-    }
-
-    @Override
-    public String printSelectedMaze() throws RemoteException {
-        if (selectedMaze != null){
-            try {
-                return  selectedMaze.print();
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
-
-        System.out.println("Select a Maze first");
-        return "";
-    }
-
-    @Override
-    public void selectMaze(int index) throws RemoteException {
-        if (index >= 0 && index < iMazeList.size()){
-            selectedMaze = iMazeList.get(index);
-        } else {
-            System.out.println("could not select maze, index out of bound");
-        }
     }
 }
