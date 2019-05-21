@@ -84,6 +84,8 @@ public class RMIClient {
             IMaze iMaze = iMazeHub.getMaze(selectMazeIndex);
             if(iMaze != null)
                 System.out.println(iMaze.print());
+            else
+                System.out.println("Selected Maze index out of bounds");
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -94,9 +96,11 @@ public class RMIClient {
             IMaze iMaze = iMazeHub.getMaze(selectMazeIndex);
             if(iMaze != null){
                 Agent[] agents = iMaze.getAgents();
-                for (int i = 0; i < MazeObjectFactory.agentId; i++){
-                    System.out.println(agents[i]);
+                for (int i = 0; i < agents.length; i++){
+                    System.out.println(agents[i].print());
                 }
+            } else {
+                System.out.println("Selected Maze index out of bounds");
             }
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -104,6 +108,23 @@ public class RMIClient {
     }
 
     private static void createObject(Object[] args){
+        try {
+            IMaze iMaze = iMazeHub.getMaze(selectMazeIndex);
+            if (iMaze != null){
+                 printOpResult(iMaze.createObject(new Position((int) args[0], (int) args[1]), (MazeObjectType) args[2]));
+            } else {
+                System.out.println("Selected Maze index out of bounds");
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
 
+    }
+
+    private static void printOpResult(boolean opResult){
+        if (opResult)
+            System.out.println("Operation Success.");
+        else
+            System.out.println("Operation Failed.");
     }
 }
