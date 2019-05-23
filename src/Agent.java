@@ -13,4 +13,12 @@ public class Agent extends MazeObject{
     public String print() {
         return "Agent" + id + " at " + getPosition() + ". Gold collected: " + collectedGold + ".";
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void collectGold(){
+        collectedGold++;
+    }
 }

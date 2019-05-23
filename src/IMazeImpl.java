@@ -1,6 +1,7 @@
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.stream.Stream;
 
 public class IMazeImpl extends UnicastRemoteObject implements IMaze, Serializable {
 
@@ -57,7 +58,35 @@ public class IMazeImpl extends UnicastRemoteObject implements IMaze, Serializabl
 
     @Override
     public boolean moveAgent(int id, Position position) throws RemoteException {
-        return false;
+        if(!isInside(position)){
+            return false;
+        }
+        Agent[] agents = getAgents();
+        Agent agent = Stream.of(agents).filter(e -> {
+            if (e != null)
+                return e.getId() == id;
+            return false;
+        }).findAny().orElse(null);
+        if(agent == null){
+            return false;
+        }
+        Position oldPosition = agent.getPosition();
+        if (isEmpty(position)){
+            mazeObjectList[oldPosition.getX()][oldPosition.getY()] = null;
+            agent.setPosition(position);
+            mazeObjectList[position.getX()][position.getY()] = agent;
+        } else {
+            MazeObjectType type = mazeObjectList[position.getX()][position.getY()].getType();
+            if (type == MazeObjectType.HOLE){
+                mazeObjectList[oldPosition.getX()][oldPosition.getY()] = null;
+            } else if( type == MazeObjectType.GOLD){
+                mazeObjectList[oldPosition.getX()][oldPosition.getY()] = null;
+                agent.setPosition(position);
+                mazeObjectList[position.getX()][position.getY()] = agent;
+                agent.collectGold();
+            }
+        }
+        return true;
     }
 
     @Override

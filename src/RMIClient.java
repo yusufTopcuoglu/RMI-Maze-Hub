@@ -10,6 +10,7 @@ public class RMIClient {
     private static IMaze selectedMaze = null;
 
     public static void main(String[] args) {
+        boolean run = true;
 
         try {
             iMazeHub = (IMazeHub) Naming.lookup(Constants.MAZE_HUB_BIND_URL);
@@ -18,9 +19,9 @@ public class RMIClient {
         }
 
         Scanner scanner = new Scanner(System.in);
-        ParsedInput parsedInput = null;
+        ParsedInput parsedInput;
         String input;
-        while( true ) {
+        while( run ) {
             input = scanner.nextLine();
             try {
                 parsedInput = ParsedInput.parse(input);
@@ -58,7 +59,7 @@ public class RMIClient {
                     moveAgent(parsedInput.getArgs());
                     break;
                 case QUIT:
-                    quit();
+                    run = false;
                     break;
             }
         }
@@ -84,16 +85,27 @@ public class RMIClient {
     }
 
     private static void moveAgent(Object[] args){
-        // TODO:: implement
+        int agentId = (int) args[0];
+        Position targetPosition = new Position((int) args[1], (int) args[2]);
+        try {
+            printOpResult(selectedMaze.moveAgent(agentId, targetPosition));
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void deleteObject(Object[] args){
-        // TODO:: implement
+        try {
+            if (selectedMaze != null){
+                printOpResult(selectedMaze.deleteObject( new Position ((int) args[0], (int) args[1])));
+            } else {
+                System.out.println("Selected Maze null");
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
-    private static void quit(){
-        // TODO:: implement
-    }
 
     private static void selectMaze(Object[] args){
         try {
@@ -118,8 +130,9 @@ public class RMIClient {
         try {
             if(selectedMaze != null){
                 Agent[] agents = selectedMaze.getAgents();
-                for (int i = 0; i < agents.length; i++){
-                    System.out.println(agents[i].print());
+                for (Agent agent : agents) {
+                    if(agent != null)
+                        System.out.println(agent.print());
                 }
             } else {
                 System.out.println("Selected Maze null");
