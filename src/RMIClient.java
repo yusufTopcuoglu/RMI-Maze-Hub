@@ -88,7 +88,10 @@ public class RMIClient {
         int agentId = (int) args[0];
         Position targetPosition = new Position((int) args[1], (int) args[2]);
         try {
-            printOpResult(selectedMaze.moveAgent(agentId, targetPosition));
+            if (selectedMaze != null)
+                printOpResult(selectedMaze.moveAgent(agentId, targetPosition));
+            else
+                printOpResult(false);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -99,7 +102,7 @@ public class RMIClient {
             if (selectedMaze != null){
                 printOpResult(selectedMaze.deleteObject( new Position ((int) args[0], (int) args[1])));
             } else {
-                System.out.println("Selected Maze null");
+                printOpResult(false);
             }
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -110,6 +113,7 @@ public class RMIClient {
     private static void selectMaze(Object[] args){
         try {
             selectedMaze = iMazeHub.getMaze((int) args[0]);
+            printOpResult(selectedMaze != null);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -120,7 +124,7 @@ public class RMIClient {
             if(selectedMaze != null)
                 System.out.println(selectedMaze.print());
             else
-                System.out.println("Selected Maze null");
+                printOpResult(false);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -135,7 +139,7 @@ public class RMIClient {
                         System.out.println(agent.print());
                 }
             } else {
-                System.out.println("Selected Maze null");
+                printOpResult(false);
             }
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -147,7 +151,7 @@ public class RMIClient {
             if (selectedMaze != null){
                  printOpResult(selectedMaze.createObject(new Position((int) args[0], (int) args[1]), (MazeObjectType) args[2]));
             } else {
-                System.out.println("Selected Maze index out of bounds");
+                printOpResult(false);
             }
         } catch (RemoteException e) {
             e.printStackTrace();

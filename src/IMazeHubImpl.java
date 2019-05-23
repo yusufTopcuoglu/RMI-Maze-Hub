@@ -12,10 +12,11 @@ public class IMazeHubImpl extends UnicastRemoteObject implements IMazeHub, Seria
 
     @Override
     public void createMaze(int width, int height) throws RemoteException {
-        IMaze iMaze = new IMazeImpl();
-        iMaze.create(height, width);
-
-        iMazeList.add(iMaze);
+        if (height > 0 && width > 0){
+            IMaze iMaze = new IMazeImpl();
+            iMaze.create(height, width);
+            iMazeList.add(iMaze);
+        }
     }
 
     @Override

@@ -35,7 +35,7 @@ public class IMazeImpl extends UnicastRemoteObject implements IMaze, Serializabl
 
     @Override
     public boolean deleteObject(Position position) throws RemoteException {
-        if(isEmpty(position)){
+        if(!isFull(position)){
             return false;
         }
         mazeObjectList[position.getX()][position.getY()] = null;
@@ -70,6 +70,9 @@ public class IMazeImpl extends UnicastRemoteObject implements IMaze, Serializabl
         if(agent == null){
             return false;
         }
+        if(agent.getPosition().distance(position) != 1){
+            return false;
+        }
         Position oldPosition = agent.getPosition();
         if (isEmpty(position)){
             mazeObjectList[oldPosition.getX()][oldPosition.getY()] = null;
@@ -84,6 +87,8 @@ public class IMazeImpl extends UnicastRemoteObject implements IMaze, Serializabl
                 agent.setPosition(position);
                 mazeObjectList[position.getX()][position.getY()] = agent;
                 agent.collectGold();
+            } else {
+                return false;
             }
         }
         return true;
@@ -129,6 +134,13 @@ public class IMazeImpl extends UnicastRemoteObject implements IMaze, Serializabl
     private boolean isEmpty(Position position){
         if (isInside(position)){
             return mazeObjectList[position.getX()][position.getY()] == null;
+        }
+        return false;
+    }
+
+    private boolean isFull(Position position){
+        if (isInside(position)){
+            return mazeObjectList[position.getX()][position.getY()] != null;
         }
         return false;
     }
